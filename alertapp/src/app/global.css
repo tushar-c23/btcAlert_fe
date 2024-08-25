@@ -82,3 +82,17 @@ h3 {
   .pagination span {
     font-size: 14px;
   }
+
+  .error-message {
+    color: red;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .no-alerts-message {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 50px;
+    color: #666;
+  }
