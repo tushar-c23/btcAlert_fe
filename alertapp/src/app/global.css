@@ -1,3 +1,5 @@
+@import 'react-toastify/dist/ReactToastify.css';
+
 nav {
     background-color: #f0f0f0;
     padding: 10px;

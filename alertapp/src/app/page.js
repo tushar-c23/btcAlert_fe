@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StatusIndicator = ({ status }) => {
   let color, text;
@@ -35,9 +37,10 @@ const StatusIndicator = ({ status }) => {
 
 export default function Home() {
   const [cards, setCards] = useState({});
+  const prevCardsRef = useRef({});
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080/ws'); // Replace with your WebSocket server URL
+    const ws = new WebSocket('ws://localhost:8080/ws');
 
     ws.onopen = () => {
       console.log('Connected to WebSocket');
@@ -48,6 +51,16 @@ export default function Home() {
       setCards(prevCards => {
         const newCards = { ...prevCards };
         data.forEach(card => {
+          if (prevCards[card.id]?.status === 'pending' && card.status === 'completed') {
+            toast.success(`Alert ${card.id} triggered!`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          }
           newCards[card.id] = card;
         });
         return newCards;
@@ -67,8 +80,13 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    prevCardsRef.current = cards;
+  }, [cards]);
+
   return (
     <div className="container">
+      <ToastContainer />
       <h1>WebSocket Cards</h1>
       <div className="card-container">
         {Object.values(cards).map((card) => (
