@@ -18,7 +18,7 @@ export default function CreateAlert() {
       }
 
     try {
-      const response = await fetch('http://localhost:8080/alert', {
+      const response = await fetch(`${process.env.SERVER_URL}/alert`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

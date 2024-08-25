@@ -53,7 +53,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080/ws');
+    const ws = new WebSocket(process.env.WS_URL);
 
     ws.onopen = () => {
       console.log('Connected to WebSocket');
