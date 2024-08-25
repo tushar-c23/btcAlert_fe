@@ -45,9 +45,12 @@ const Card = ({ card }) => (
   </div>
 );
 
+const ITEMS_PER_PAGE = 9; // Number of completed alerts per page
+
 export default function Home() {
   const [cards, setCards] = useState({});
   const prevCardsRef = useRef({});
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:8080/ws');
@@ -97,6 +100,16 @@ export default function Home() {
   const pendingAlerts = Object.values(cards).filter(card => card.status === 'pending');
   const completedAlerts = Object.values(cards).filter(card => card.status === 'completed');
 
+  const totalPages = Math.ceil(completedAlerts.length / ITEMS_PER_PAGE);
+  const paginatedCompletedAlerts = completedAlerts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   return (
     <div className="container">
       <ToastContainer />
@@ -112,8 +125,25 @@ export default function Home() {
       <div className="alerts-section">
         <h2>Completed Alerts</h2>
         <div className="card-container">
-          {completedAlerts.map(card => <Card key={card.id} card={card} />)}
+          {paginatedCompletedAlerts.map(card => <Card key={card.id} card={card} />)}
         </div>
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button 
+              onClick={() => handlePageChange(currentPage - 1)} 
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>{currentPage} of {totalPages}</span>
+            <button 
+              onClick={() => handlePageChange(currentPage + 1)} 
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
